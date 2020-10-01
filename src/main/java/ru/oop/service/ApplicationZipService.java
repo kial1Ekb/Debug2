@@ -13,38 +13,33 @@ import java.util.function.Consumer;
  * @author vpyzhyanov
  * @since 05.02.20
  */
-public interface ApplicationZipService
-{
+public interface ApplicationZipService {
 
     /**
      * Файл извлечённый из архива встроенного прилоежния.
      */
-    class ExtractedFile
-    {
+    class ExtractedFile {
         private final String name;
         private ByteArrayInputStream data;
 
-        public ExtractedFile(String name, ByteArrayInputStream data)
-        {
+        public ExtractedFile(String name, ByteArrayInputStream data) {
             this.name = name;
             this.data = data;
         }
 
-        public ByteArrayInputStream getData()
-        {
+        public ByteArrayInputStream getData() {
             return data;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public void setData(ByteArrayInputStream data)
-        {
+        public void setData(ByteArrayInputStream data) {
             this.data = data;
         }
     }
+
     /**
      * Имя файла встроенного приложения
      */
@@ -53,9 +48,10 @@ public interface ApplicationZipService
     /**
      * Извлечь файлы приложения и выполнить для них действие.<br>
      * Если приложение лицензируемое, то расшифрует файлы приложения.
-     * @param app встроенное приложение
+     *
+     * @param app    встроенное приложение
      * @param action действие, которое нужно выполнить над файлами
      */
     void extractFilesAndDoAction(EmbeddedApplication app,
-            Consumer<Map<String, ExtractedFile>> action);
+                                 Consumer<Map<String, ExtractedFile>> action);
 }

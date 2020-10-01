@@ -8,33 +8,27 @@ import java.io.File;
  * @author vpyzhyanov
  * @since 30.09.2020
  */
-public class EmbeddedApplication
-{
+public class EmbeddedApplication {
     private String code;
     private File file;
 
-    EmbeddedApplication(String code)
-    {
+    EmbeddedApplication(String code) {
         this.code = code;
     }
 
-    public String getCode()
-    {
+    public String getCode() {
         return code;
     }
 
-    void setCode(String code)
-    {
+    void setCode(String code) {
         this.code = code;
     }
 
-    public File getFile()
-    {
+    public File getFile() {
         return file;
     }
 
-    void setFile(File file)
-    {
+    void setFile(File file) {
         this.file = file;
     }
 }

@@ -22,47 +22,34 @@ import java.util.zip.ZipInputStream;
  * @author vpyzhyanov
  * @since 30.09.2020
  */
-public class ZipUtils
-{
-    private static final Charset[] SUPPORTED_CHARSETS = { StandardCharsets.UTF_8,
+public class ZipUtils {
+    private static final Charset[] SUPPORTED_CHARSETS = {StandardCharsets.UTF_8,
             Charset.forName("windows-1251"), Charset.forName("MacCyrillic"),
-            StandardCharsets.ISO_8859_1 };
+            StandardCharsets.ISO_8859_1};
 
     /**
      * Прочитать zip архив и извлечь имена всех файлов (Entries)<br>
      * Поддерживает несколько кодировок для zip архива.
      */
-    public static Set<String> getAllFileNamesFromZip(byte[] content)
-    {
+    public static Set<String> getAllFileNamesFromZip(byte[] content) {
         int charsetIndex = 0;
-        while (charsetIndex < SUPPORTED_CHARSETS.length)
-        {
-            try
-            {
+        while (charsetIndex < SUPPORTED_CHARSETS.length) {
+            try {
                 Set<String> fileNames = new HashSet<>();
                 try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(content),
-                        SUPPORTED_CHARSETS[charsetIndex]))
-                {
+                        SUPPORTED_CHARSETS[charsetIndex])) {
                     ZipEntry entry;
-                    while ((entry = zis.getNextEntry()) != null)
-                    {
+                    while ((entry = zis.getNextEntry()) != null) {
                         fileNames.add(entry.getName());
                     }
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     throw new FxException(e);
                 }
                 return fileNames;
-            }
-            catch (IllegalArgumentException e)
-            {
-                if (e.getCause() != null && e.getCause().getClass().equals(MalformedInputException.class))
-                {
+            } catch (IllegalArgumentException e) {
+                if (e.getCause() != null && e.getCause().getClass().equals(MalformedInputException.class)) {
                     charsetIndex++;
-                }
-                else
-                {
+                } else {
                     throw e;
                 }
             }
@@ -72,12 +59,12 @@ public class ZipUtils
 
     /**
      * Извлечь файлы из zip архива, поместив их в мапку по именам файлов
+     *
      * @param bytes zip архив
      * @return Map, где ключ - имя файла, значение - поток данных этого файла
      * @see #unzipFiles(InputStream)
      */
-    public static Map<String, ByteArrayInputStream> unzipFiles(byte[] bytes) throws IOException
-    {
+    public static Map<String, ByteArrayInputStream> unzipFiles(byte[] bytes) throws IOException {
         return unzipFiles(new ByteArrayInputStream(bytes));
     }
 
@@ -86,42 +73,33 @@ public class ZipUtils
      * Данные файлов возвращаются в виде потока с поддержкой операции {@linkplain ByteArrayInputStream#reset()},
      * что даёт возможность <b>читать файл несколько раз</b>!<br>
      * Поддерживает несколько кодировок для zip архива.
+     *
      * @param inputStream zip архив
      * @return Map, где ключ - имя файла, значение - поток данных этого файла
      * @see #unzipFiles(byte[])
      */
-    public static Map<String, ByteArrayInputStream> unzipFiles(InputStream inputStream) throws IOException
-    {
+    public static Map<String, ByteArrayInputStream> unzipFiles(InputStream inputStream) throws IOException {
         // Переводим входной поток в ByteArrayInputStream с целью возможности делать reset
         ByteArrayInputStream byteArrayInputStream = toByteArrayInputStream(inputStream);
         int charsetIndex = 0;
-        while (charsetIndex < SUPPORTED_CHARSETS.length)
-        {
-            try
-            {
+        while (charsetIndex < SUPPORTED_CHARSETS.length) {
+            try {
                 Map<String, ByteArrayInputStream> result = new HashMap<>();
                 try (ZipInputStream zin = new ZipInputStream(byteArrayInputStream,
-                        SUPPORTED_CHARSETS[charsetIndex]))
-                {
+                        SUPPORTED_CHARSETS[charsetIndex])) {
                     ZipEntry entry;
-                    while ((entry = zin.getNextEntry()) != null)
-                    {
+                    while ((entry = zin.getNextEntry()) != null) {
                         String name = entry.getName();
                         ByteArrayInputStream is = toByteArrayInputStream(zin);
                         result.put(name, is);
                     }
                 }
                 return result;
-            }
-            catch (IllegalArgumentException e)
-            {
-                if (e.getCause() != null && e.getCause().getClass().equals(MalformedInputException.class))
-                {
+            } catch (IllegalArgumentException e) {
+                if (e.getCause() != null && e.getCause().getClass().equals(MalformedInputException.class)) {
                     charsetIndex++;
                     byteArrayInputStream.reset();
-                }
-                else
-                {
+                } else {
                     throw e;
                 }
             }
@@ -129,8 +107,7 @@ public class ZipUtils
         throw new FxException("Unsupported encoding of zip file");
     }
 
-    private static ByteArrayInputStream toByteArrayInputStream(InputStream inputStream) throws IOException
-    {
+    private static ByteArrayInputStream toByteArrayInputStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         IOUtils.copy(inputStream, out);
         return new ByteArrayInputStream(out.toByteArray());

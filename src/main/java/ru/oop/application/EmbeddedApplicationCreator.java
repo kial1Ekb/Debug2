@@ -19,8 +19,7 @@ import java.util.function.Predicate;
  * @author vpyzhyanov
  * @since 30.09.2020
  */
-public class EmbeddedApplicationCreator
-{
+public class EmbeddedApplicationCreator {
     public EmbeddedApplication create(String code, Path filePath) {
         File file = filePath.toFile();
         if (!file.exists()) {
@@ -28,19 +27,15 @@ public class EmbeddedApplicationCreator
         }
         EmbeddedApplication application = new EmbeddedApplication(code);
         application.setFile(file);
-        try
-        {
+        try {
             checkApplicationFormat(application, Files.readAllBytes(filePath));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new FxException(String.format("Не удалось прочитать файл %s", filePath), e);
         }
         return application;
     }
 
-    private void checkApplicationFormat(final EmbeddedApplication application, byte[] content) throws FxException
-    {
+    private void checkApplicationFormat(final EmbeddedApplication application, byte[] content) throws FxException {
         Predicate<Set<String>> hasIndexHtml = fileNames ->
                 fileNames.contains(ApplicationZipService.EMBEDDED_APP_FILENAME);
         validateZip(application, content, hasIndexHtml);
@@ -52,31 +47,26 @@ public class EmbeddedApplicationCreator
      *   <li>Формата файла: файл должен быть формата ZIP и не пустым</li>
      *   <li>Проверка наличия обязательных файлов (настраиваемая)</li>
      * </ol>
-     * @param application встроенное приложение
-     * @param content содержимое файла встроенного приложения
+     *
+     * @param application                встроенное приложение
+     * @param content                    содержимое файла встроенного приложения
      * @param requiredFileNamesPredicate условие на обязательные файлы
      * @throws FxException при ошибке валидации
      */
     private void validateZip(EmbeddedApplication application, byte[] content,
-            Predicate<Set<String>> requiredFileNamesPredicate) throws FxException
-    {
+                             Predicate<Set<String>> requiredFileNamesPredicate) throws FxException {
         String fileIsNotZippedMsg = String.format("Недопустимый формат файла встроенного приложения %s. "
                 + "Файл должен быть в формате zip и не пустым.", application.getCode());
         Set<String> fileNames;
-        try
-        {
+        try {
             fileNames = ZipUtils.getAllFileNamesFromZip(content);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new FxException(fileIsNotZippedMsg, e);
         }
-        if (CollectionUtils.isEmpty(fileNames))
-        {
+        if (CollectionUtils.isEmpty(fileNames)) {
             throw new FxException(fileIsNotZippedMsg);
         }
-        if (!requiredFileNamesPredicate.test(fileNames))
-        {
+        if (!requiredFileNamesPredicate.test(fileNames)) {
             throw new FxException(String.format("В архиве встроенного приложения %s "
                     + "должен присутствовать файл index.html", application.getCode()));
         }

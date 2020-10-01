@@ -19,14 +19,10 @@ import java.util.function.Consumer;
  * @author vpyzhyanov
  * @since 30.09.2020
  */
-public class ApplicationZipServiceImpl implements ApplicationZipService
-{
-    private static void closeStreams(Map<String, ExtractedFile> files) throws IOException
-    {
-        if (files != null)
-        {
-            for (ExtractedFile extractedFile : files.values())
-            {
+public class ApplicationZipServiceImpl implements ApplicationZipService {
+    private static void closeStreams(Map<String, ExtractedFile> files) throws IOException {
+        if (files != null) {
+            for (ExtractedFile extractedFile : files.values()) {
                 extractedFile.getData().close();
             }
         }
@@ -34,16 +30,15 @@ public class ApplicationZipServiceImpl implements ApplicationZipService
 
     /**
      * Извлечь архив в виде Map отображающий имя файла на InputStream<br>
+     *
      * @param stream zip архив
      * @return файлы в виде Map с ключом в виде имени файла
      */
-    private static Map<String, ExtractedFile> extractZip(InputStream stream) throws IOException
-    {
+    private static Map<String, ExtractedFile> extractZip(InputStream stream) throws IOException {
         final Map<String, ExtractedFile> extractedFiles = new HashMap<>();
         Map<String, ByteArrayInputStream> files = ZipUtils.unzipFiles(stream);
 
-        if (!files.containsKey(EMBEDDED_APP_FILENAME))
-        {
+        if (!files.containsKey(EMBEDDED_APP_FILENAME)) {
             throw new FxException("Архив должен содержать файл index.html");
         }
 
@@ -54,30 +49,22 @@ public class ApplicationZipServiceImpl implements ApplicationZipService
 
     @Override
     public void extractFilesAndDoAction(EmbeddedApplication app,
-            Consumer<Map<String, ExtractedFile>> action)
-    {
+                                        Consumer<Map<String, ExtractedFile>> action) {
         File file = app.getFile();
 
-        if (file == null)
-        {
+        if (file == null) {
             throw new FxException("Приложение не найдено");
         }
 
-        try (InputStream content = FileUtils.openInputStream(file))
-        {
+        try (InputStream content = FileUtils.openInputStream(file)) {
             Map<String, ExtractedFile> files = null;
-            try
-            {
+            try {
                 files = extractZip(content);
                 action.accept(files);
-            }
-            finally
-            {
+            } finally {
                 closeStreams(files);
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             String msg = "Ошибка чтения файла встроенного приложения";
             throw new FxException(msg, e);
         }
