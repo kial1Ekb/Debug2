@@ -28,13 +28,13 @@ jobs:
           # context: .
           # platforms: linux/arm64/v8
           push: true
-          tags: kial1/debug2_by_vpyzhyanov:latest
+          tags: kial1/byvpyzhyanov:latest
           # cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/debug2:buildcache
           # cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/debug2:buildcache,mode=max
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: kial1/debug2_by_vpyzhyanov:latest
+          image-ref: kial1/byvpyzhyanov:latest
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
