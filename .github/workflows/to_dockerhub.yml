@@ -3,7 +3,7 @@ name: Publish to Docker Hub
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   docker:
@@ -29,8 +29,8 @@ jobs:
           # platforms: linux/arm64/v8
           push: true
           tags: kial1/debug2_by_vpyzhyanov/:latest
-          # cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/habit-tracker:buildcache
-          # cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/habit-tracker:buildcache,mode=max
+          # cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/debug2:buildcache
+          # cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/debug2:buildcache,mode=max
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
